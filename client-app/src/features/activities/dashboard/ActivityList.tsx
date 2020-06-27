@@ -1,14 +1,22 @@
-import React from 'react'
+import React, { SyntheticEvent } from 'react'
 import { Item, Button, Label, Segment } from 'semantic-ui-react'
 import { IActivity } from '../../../app/models/activity'
 
 interface IProps {
     activities: IActivity[];
     selectActivity: (id: string) => void;
-    deleteActivity: (id: string) => void;
+    deleteActivity: (event: SyntheticEvent<HTMLButtonElement>, id: string) => void;
+    submitting: boolean;
+    target:string;
 }
 
-const ActivityList: React.FC<IProps> = ({ activities, selectActivity, deleteActivity }) => {
+const ActivityList: React.FC<IProps> = ({
+    activities,
+    selectActivity,
+    deleteActivity,
+    submitting,
+    target
+}) => {
     return (
         <Segment>
             <Item.Group divided>
@@ -28,10 +36,12 @@ const ActivityList: React.FC<IProps> = ({ activities, selectActivity, deleteActi
                                     content='View'
                                     color='blue' />
                                 <Button
-                                    onClick={() => deleteActivity(activity.id)}
+                                    name={activity.id}
+                                    onClick={(e) => deleteActivity(e, activity.id)}
                                     floated='right'
                                     content='Delete'
-                                    color='red' />
+                                    color='red' 
+                                    loading={target === activity.id && submitting} />
                                 <Label basic content={activity.category} />
                             </Item.Extra>
                         </Item.Content>
