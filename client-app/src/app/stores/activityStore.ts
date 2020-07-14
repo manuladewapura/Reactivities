@@ -1,13 +1,20 @@
-import { observable, action, computed, configure, runInAction } from 'mobx';
-import { createContext, SyntheticEvent } from 'react';
+import { observable, action, computed, runInAction } from 'mobx';
+import { SyntheticEvent } from 'react';
 import { IActivity } from '../models/activity';
 import agent from '../api/agent';
 import 'mobx-react-lite/batchingForReactDom'
 import { toast } from 'react-toastify';
+import { RootStore } from './rootStore';
 
-configure({ enforceActions: 'always' });
 
-export class ActivityStore {
+export default class ActivityStore {
+
+    rootStore: RootStore;
+
+    constructor(rootStore: RootStore){
+        this.rootStore = rootStore;
+    }
+
     @observable activityRegistry = new Map();
     @observable activity: IActivity | null = null;
     @observable loadingInitial = false;
@@ -31,7 +38,7 @@ export class ActivityStore {
 
     // note that the development build is not optimized.
 
-    // @action loadingActivities = () => {
+    // @action loadActivities = () => {
     //     this.loadingInitial = true;
 
     //     agent.Activities.list()
@@ -45,7 +52,7 @@ export class ActivityStore {
     //         .finally(() => this.loadingInitial = false);
     //  }
 
-    @action loadingActivities = async () => {
+    @action loadActivities = async () => {
         this.loadingInitial = true;
         try {
             const activities = await agent.Activities.list();
@@ -154,5 +161,3 @@ export class ActivityStore {
         }
     }
 }
-
-export default createContext(new ActivityStore());
